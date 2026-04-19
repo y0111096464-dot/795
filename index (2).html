@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus AI Hub | المنصة المتكاملة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #a855f7;
+            --accent: #f43f5e;
+            --bg-dark: #0f172a;
+            --glass: rgba(30, 41, 59, 0.7);
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg-dark);
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
+
+        .glass-panel {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+        }
+
+        .ai-gradient-text {
+            background: linear-gradient(135deg, #6366f1, #a855f7, #f43f5e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .glow-btn {
+            position: relative;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .glow-btn:hover {
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        .loader {
+            width: 24px;
+            height: 24px;
+            border: 3px solid #FFF;
+            border-bottom-color: transparent;
+            border-radius: 50%;
+            display: inline-block;
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
+        }
+
+        @keyframes rotation {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .image-preview {
+            max-width: 100%;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .code-editor {
+            font-family: monospace;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1rem;
+            border-radius: 12px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="p-6 flex justify-between items-center sticky top-0 z-50 glass-panel mx-4 mt-4 mb-8">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-rose-500 rounded-xl flex items-center justify-center">
+                <i class="fas fa-brain text-white text-xl"></i>
+            </div>
+            <h1 class="text-2xl font-extrabold ai-gradient-text tracking-tighter">NEXUS AI</h1>
+        </div>
+        
+        <nav class="hidden md:flex items-center gap-6">
+            <button onclick="showTab('text-gen')" class="nav-link font-medium hover:text-indigo-400 transition-colors">مختبر النصوص</button>
+            <button onclick="showTab('forge-ide')" class="nav-link font-medium hover:text-indigo-400 transition-colors">إنشاء البرمجيات</button>
+            <button onclick="showTab('vision')" class="nav-link font-medium hover:text-indigo-400 transition-colors">الرؤية الذكية</button>
+            <button onclick="showTab('image-gen')" class="nav-link font-medium hover:text-indigo-400 transition-colors">الفن الرقمي</button>
+            <button onclick="showTab('audio-gen')" class="nav-link font-medium hover:text-indigo-400 transition-colors">الصوتيات</button>
+        </nav>
+
+        <div class="flex items-center gap-4">
+            <span class="text-xs px-3 py-1 bg-green-500/20 text-green-400 rounded-full border border-green-500/30">نظام فائق (v2.5)</span>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 container mx-auto px-4 pb-20">
+        
+        <!-- Welcome Section -->
+        <section id="welcome" class="text-center mb-16">
+            <h2 class="text-4xl md:text-6xl font-black mb-6 leading-tight">المنصة التي تصنع <br><span class="ai-gradient-text">المستقبل والبرمجيات</span></h2>
+            <p class="text-slate-400 max-w-2xl mx-auto text-lg">بإمكانك الآن إنشاء تطبيقات، مواقع، وتحليل بيانات بضغطة زر واحدة عبر أقوى محرك ذكاء اصطناعي.</p>
+        </section>
+
+        <!-- Tab: Forge IDE (Software Creation) -->
+        <div id="forge-ide" class="tab-content">
+            <div class="glass-panel p-6 max-w-5xl mx-auto">
+                <div class="flex items-center gap-3 mb-6">
+                    <i class="fas fa-code text-cyan-400 text-2xl"></i>
+                    <h3 class="text-xl font-bold">Forge IDE - بناء البرمجيات</h3>
+                </div>
+                <p class="text-sm text-slate-400 mb-4 text-right">صف التطبيق أو البرنامج الذي تريد إنشاؤه، وسأقوم بكتابة الأكواد بالكامل لك.</p>
+                <textarea id="code-prompt" placeholder="مثلاً: صمم لي صفحة ويب شخصية احترافية مع قائمة تنقل وتصميم متجاوب..." class="w-full h-40 bg-slate-800/50 border border-slate-700 rounded-xl p-4 mb-4 focus:ring-2 focus:ring-cyan-500 outline-none text-right" dir="rtl"></textarea>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <button onclick="generateSoftware('html')" id="html-btn" class="py-3 bg-slate-800 hover:bg-cyan-900 border border-slate-700 rounded-xl transition-all flex items-center justify-center gap-2">
+                        <i class="fab fa-html5 text-orange-500"></i> تطبيق ويب (HTML/CSS/JS)
+                    </button>
+                    <button onclick="generateSoftware('python')" id="py-btn" class="py-3 bg-slate-800 hover:bg-cyan-900 border border-slate-700 rounded-xl transition-all flex items-center justify-center gap-2">
+                        <i class="fab fa-python text-blue-400"></i> سكربت Python / تحليل بيانات
+                    </button>
+                </div>
+
+                <div id="code-result-container" class="mt-8 hidden">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-cyan-400 font-mono text-sm">Generated Source Code:</span>
+                        <div class="flex gap-2">
+                            <button onclick="copyToClipboard('code-output')" class="px-3 py-1 bg-slate-700 rounded-md text-xs hover:bg-indigo-600 transition-colors">نسخ الكود</button>
+                            <button id="preview-btn" onclick="previewCode()" class="px-3 py-1 bg-cyan-600 rounded-md text-xs hover:bg-cyan-500 transition-colors hidden">معاينة مباشرة</button>
+                        </div>
+                    </div>
+                    <div id="code-output" class="code-editor text-left" dir="ltr"></div>
+                </div>
+                
+                <!-- Live Preview Modal-like area -->
+                <div id="live-preview-container" class="mt-8 hidden border border-slate-700 rounded-2xl overflow-hidden bg-white">
+                    <div class="bg-slate-200 p-2 flex justify-between items-center text-slate-800 text-xs px-4 font-bold">
+                        <span>Live Preview</span>
+                        <button onclick="document.getElementById('live-preview-container').classList.add('hidden')" class="text-rose-500">إغلاق المعاينة</button>
+                    </div>
+                    <iframe id="code-iframe" class="w-full h-[500px]"></iframe>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Text Generation (AI Lab) -->
+        <div id="text-gen" class="tab-content active">
+            <div class="glass-panel p-6 max-w-4xl mx-auto">
+                <div class="flex items-center gap-3 mb-6">
+                    <i class="fas fa-pen-nib text-indigo-500 text-2xl"></i>
+                    <h3 class="text-xl font-bold">مختبر النصوص والبحث</h3>
+                </div>
+                <textarea id="text-input" placeholder="ماذا تريد أن تكتب أو تبحث عنه؟" class="w-full h-40 bg-slate-800/50 border border-slate-700 rounded-xl p-4 mb-4 focus:ring-2 focus:ring-indigo-500 outline-none text-right" dir="rtl"></textarea>
+                <div class="flex flex-wrap gap-4 mb-6">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="search-grounding" class="w-4 h-4 accent-indigo-500">
+                        <span class="text-sm">تفعيل البحث في جوجل للحصول على معلومات دقيقة</span>
+                    </label>
+                </div>
+                <button onclick="generateText()" id="text-btn" class="w-full py-4 bg-indigo-600 hover:bg-indigo-700 rounded-xl font-bold transition-all glow-btn flex items-center justify-center gap-2">
+                    <span>بدء المعالجة الذكية</span>
+                    <i class="fas fa-sparkles"></i>
+                </button>
+
+                <div id="text-result-container" class="mt-8 hidden">
+                    <div class="p-6 bg-slate-900/50 rounded-2xl border border-slate-700 relative">
+                        <div id="text-result" class="prose prose-invert max-w-none text-right leading-relaxed text-slate-200"></div>
+                        <div id="sources" class="mt-4 pt-4 border-t border-slate-800 text-xs text-slate-500"></div>
+                        <button onclick="copyToClipboard('text-result')" class="absolute top-4 left-4 p-2 bg-slate-800 hover:bg-indigo-500 rounded-lg transition-colors">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Vision (Image Understanding) -->
+        <div id="vision" class="tab-content">
+            <div class="glass-panel p-6 max-w-4xl mx-auto">
+                <div class="flex items-center gap-3 mb-6">
+                    <i class="fas fa-eye text-rose-500 text-2xl"></i>
+                    <h3 class="text-xl font-bold">تحليل وفهم الصور</h3>
+                </div>
+                
+                <div id="drop-zone" class="border-2 border-dashed border-slate-700 rounded-2xl p-10 text-center hover:border-rose-500 transition-colors mb-6 cursor-pointer" onclick="document.getElementById('vision-file').click()">
+                    <i class="fas fa-cloud-upload-alt text-4xl mb-4 text-slate-500"></i>
+                    <p class="text-slate-400">اسحب صورة هنا أو انقر للاختيار</p>
+                    <input type="file" id="vision-file" hidden accept="image/*" onchange="handleImageUpload(event)">
+                </div>
+
+                <div id="vision-preview-container" class="hidden mb-6 text-center">
+                    <img id="vision-preview" class="image-preview mx-auto max-h-80" src="">
+                </div>
+
+                <input type="text" id="vision-prompt" placeholder="ماذا تريد أن تعرف عن هذه الصورة؟" class="w-full bg-slate-800/50 border border-slate-700 rounded-xl p-4 mb-4 focus:ring-2 focus:ring-rose-500 outline-none text-right">
+                
+                <button onclick="analyzeImage()" id="vision-btn" class="w-full py-4 bg-rose-600 hover:bg-rose-700 rounded-xl font-bold transition-all glow-btn">تحليل الصورة</button>
+
+                <div id="vision-result-container" class="mt-8 hidden">
+                    <div class="p-6 bg-slate-900/50 rounded-2xl border border-slate-700">
+                        <p id="vision-result" class="text-slate-200 leading-relaxed"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Image Generation (Imagen 4.0) -->
+        <div id="image-gen" class="tab-content">
+            <div class="glass-panel p-6 max-w-4xl mx-auto">
+                <div class="flex items-center gap-3 mb-6">
+                    <i class="fas fa-palette text-amber-500 text-2xl"></i>
+                    <h3 class="text-xl font-bold">مولد الصور الفني (Imagen 4.0)</h3>
+                </div>
+                <textarea id="image-prompt" placeholder="وصف الصورة التي تتخيلها بدقة..." class="w-full h-32 bg-slate-800/50 border border-slate-700 rounded-xl p-4 mb-6 focus:ring-2 focus:ring-amber-500 outline-none text-right"></textarea>
+                
+                <button onclick="generateArt()" id="art-btn" class="w-full py-4 bg-amber-600 hover:bg-amber-700 rounded-xl font-bold transition-all glow-btn">إنشاء الصورة الآن</button>
+
+                <div id="art-result-container" class="mt-8 hidden text-center">
+                    <div class="relative inline-block group">
+                        <img id="art-result" class="image-preview" src="">
+                        <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl flex items-center justify-center gap-4">
+                            <a id="art-download" href="#" download="nexus-ai-art.png" class="p-3 bg-white text-black rounded-full hover:scale-110 transition-transform">
+                                <i class="fas fa-download"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Audio (TTS) -->
+        <div id="audio-gen" class="tab-content">
+            <div class="glass-panel p-6 max-w-4xl mx-auto">
+                <div class="flex items-center gap-3 mb-6">
+                    <i class="fas fa-volume-up text-emerald-500 text-2xl"></i>
+                    <h3 class="text-xl font-bold">تحويل النص إلى صوت (Vocal Engine)</h3>
+                </div>
+                <textarea id="audio-text" placeholder="اكتب النص الذي تريد تحويله إلى صوت..." class="w-full h-32 bg-slate-800/50 border border-slate-700 rounded-xl p-4 mb-6 focus:ring-2 focus:ring-emerald-500 outline-none text-right"></textarea>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <select id="voice-select" class="bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm outline-none">
+                        <option value="Kore">Kore (هادئ)</option>
+                        <option value="Zephyr">Zephyr (قوي)</option>
+                        <option value="Puck">Puck (مرح)</option>
+                        <option value="Charon">Charon (عميق)</option>
+                    </select>
+                </div>
+
+                <button onclick="generateAudio()" id="audio-btn" class="w-full py-4 bg-emerald-600 hover:bg-emerald-700 rounded-xl font-bold transition-all glow-btn">توليد المقطع الصوتي</button>
+
+                <div id="audio-result-container" class="mt-8 hidden">
+                    <div class="flex flex-col items-center gap-4 bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+                        <audio id="audio-player" controls class="w-full"></audio>
+                        <p class="text-xs text-slate-500 font-mono" id="audio-info"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="p-6 text-center text-slate-500 text-sm border-t border-slate-800">
+        <p>© 2024 NEXUS AI PLATFORM | المنصة الفائقة لبناء كل شيء</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        const apiKey = ""; 
+        let currentUserId = 'user-' + Math.random().toString(36).substr(2, 9);
+        let uploadedImageBase64 = null;
+        let lastGeneratedCode = "";
+        let lastLang = "";
+
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('text-indigo-400', 'font-bold');
+            });
+            event?.target?.classList?.add('text-indigo-400', 'font-bold');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        async function fetchWithRetry(url, options, maxRetries = 5) {
+            let delay = 1000;
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (response.ok) return await response.json();
+                    if (response.status !== 429 && response.status < 500) break;
+                } catch (e) {}
+                await new Promise(r => setTimeout(r, delay));
+                delay *= 2;
+            }
+            throw new Error("فشلت العملية. يرجى المحاولة لاحقاً.");
+        }
+
+        function setLoading(btnId, isLoading) {
+            const btn = document.getElementById(btnId);
+            if (isLoading) {
+                btn.disabled = true;
+                btn.dataset.original = btn.innerHTML;
+                btn.innerHTML = `<span class="loader"></span> جاري العمل...`;
+            } else {
+                btn.disabled = false;
+                btn.innerHTML = btn.dataset.original;
+            }
+        }
+
+        function copyToClipboard(id) {
+            const text = document.getElementById(id).innerText;
+            const el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            // Non-alert notification
+            const notification = document.createElement('div');
+            notification.className = "fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-[100]";
+            notification.innerText = "تم النسخ بنجاح!";
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 2000);
+        }
+
+        // --- NEW: Forge IDE Logic ---
+        async function generateSoftware(lang) {
+            const prompt = document.getElementById('code-prompt').value;
+            if (!prompt) return;
+
+            setLoading(lang === 'html' ? 'html-btn' : 'py-btn', true);
+            lastLang = lang;
+            
+            try {
+                const systemPrompt = `You are a world-class software engineer. 
+                Generate functional, clean, and modern code based on the user request.
+                If the user asks for a website/app, output ONLY the HTML, CSS, and JS in a single self-contained file.
+                If they ask for Python, provide a complete script. 
+                Do not include markdown triple backticks in your output, just the raw code.`;
+
+                const data = await fetchWithRetry(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: `Create this ${lang} program: ${prompt}` }] }],
+                        systemInstruction: { parts: [{ text: systemPrompt }] }
+                    })
+                });
+
+                let code = data.candidates?.[0]?.content?.parts?.[0]?.text || "// No code generated.";
+                // Cleaning possible markdown
+                code = code.replace(/```[a-z]*\n/g, '').replace(/```/g, '');
+                
+                lastGeneratedCode = code;
+                const output = document.getElementById('code-output');
+                output.innerText = code;
+                document.getElementById('code-result-container').classList.remove('hidden');
+                
+                if (lang === 'html') {
+                    document.getElementById('preview-btn').classList.remove('hidden');
+                } else {
+                    document.getElementById('preview-btn').classList.add('hidden');
+                }
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoading(lang === 'html' ? 'html-btn' : 'py-btn', false);
+            }
+        }
+
+        function previewCode() {
+            const container = document.getElementById('live-preview-container');
+            const iframe = document.getElementById('code-iframe');
+            container.classList.remove('hidden');
+            
+            const blob = new Blob([lastGeneratedCode], { type: 'text/html' });
+            iframe.src = URL.createObjectURL(blob);
+            container.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // --- Existing Features ---
+        async function generateText() {
+            const input = document.getElementById('text-input').value;
+            const useSearch = document.getElementById('search-grounding').checked;
+            if (!input) return;
+
+            setLoading('text-btn', true);
+            const resultContainer = document.getElementById('text-result-container');
+            const resultText = document.getElementById('text-result');
+            const sourcesDiv = document.getElementById('sources');
+            
+            try {
+                const payload = {
+                    contents: [{ parts: [{ text: input }] }],
+                    systemInstruction: { parts: [{ text: "أنت مساعد ذكاء اصطناعي فائق الذكاء، إجاباتك مفصلة، دقيقة، وباللغة العربية الفصحى الجميلة." }] }
+                };
+                if (useSearch) payload.tools = [{ "google_search": {} }];
+
+                const data = await fetchWithRetry(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+
+                const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "لم يتم إنتاج محتوى.";
+                resultText.innerText = text;
+                
+                const attributions = data.candidates?.[0]?.groundingMetadata?.groundingAttributions;
+                if (attributions && attributions.length > 0) {
+                    sourcesDiv.innerHTML = "<strong>المصادر:</strong><br>" + attributions.map(a => `<a href="${a.web?.uri}" target="_blank" class="underline block">${a.web?.title}</a>`).join("");
+                } else {
+                    sourcesDiv.innerHTML = "";
+                }
+
+                resultContainer.classList.remove('hidden');
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoading('text-btn', false);
+            }
+        }
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                uploadedImageBase64 = e.target.result.split(',')[1];
+                document.getElementById('vision-preview').src = e.target.result;
+                document.getElementById('vision-preview-container').classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function analyzeImage() {
+            const prompt = document.getElementById('vision-prompt').value || "اشرح محتويات هذه الصورة بالتفصيل.";
+            if (!uploadedImageBase64) return;
+            setLoading('vision-btn', true);
+            try {
+                const data = await fetchWithRetry(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }, { inlineData: { mimeType: "image/png", data: uploadedImageBase64 } }] }]
+                    })
+                });
+                document.getElementById('vision-result').innerText = data.candidates?.[0]?.content?.parts?.[0]?.text || "لا يمكن تحليل الصورة.";
+                document.getElementById('vision-result-container').classList.remove('hidden');
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoading('vision-btn', false);
+            }
+        }
+
+        async function generateArt() {
+            const prompt = document.getElementById('image-prompt').value;
+            if (!prompt) return;
+            setLoading('art-btn', true);
+            try {
+                const data = await fetchWithRetry(`https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${apiKey}`, {
+                    method: 'POST',
+                    body: JSON.stringify({ instances: { prompt: prompt }, parameters: { sampleCount: 1 } })
+                });
+                const url = `data:image/png;base64,${data.predictions[0].bytesBase64Encoded}`;
+                document.getElementById('art-result').src = url;
+                document.getElementById('art-download').href = url;
+                document.getElementById('art-result-container').classList.remove('hidden');
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoading('art-btn', false);
+            }
+        }
+
+        async function generateAudio() {
+            const text = document.getElementById('audio-text').value;
+            const voice = document.getElementById('voice-select').value;
+            if (!text) return;
+            setLoading('audio-btn', true);
+            try {
+                const data = await fetchWithRetry(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: text }] }],
+                        generationConfig: {
+                            responseModalities: ["AUDIO"],
+                            speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } }
+                        }
+                    })
+                });
+                const audioData = data.candidates[0].content.parts[0].inlineData.data;
+                const blob = pcmToWav(audioData, 24000);
+                document.getElementById('audio-player').src = URL.createObjectURL(blob);
+                document.getElementById('audio-result-container').classList.remove('hidden');
+                document.getElementById('audio-player').play();
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoading('audio-btn', false);
+            }
+        }
+
+        function pcmToWav(base64Data, sampleRate) {
+            const binaryString = atob(base64Data);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) bytes[i] = binaryString.charCodeAt(i);
+            const buffer = new ArrayBuffer(44 + bytes.length);
+            const view = new DataView(buffer);
+            writeString(view, 0, 'RIFF');
+            view.setUint32(4, 36 + bytes.length, true);
+            writeString(view, 8, 'WAVE');
+            writeString(view, 12, 'fmt ');
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true);
+            view.setUint16(22, 1, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * 2, true);
+            view.setUint16(32, 2, true);
+            view.setUint16(34, 16, true);
+            writeString(view, 36, 'data');
+            view.setUint32(40, bytes.length, true);
+            for (let i = 0; i < bytes.length; i++) view.setUint8(44 + i, bytes[i]);
+            return new Blob([buffer], { type: 'audio/wav' });
+        }
+
+        function writeString(view, offset, string) {
+            for (let i = 0; i < string.length; i++) view.setUint8(offset + i, string.charCodeAt(i));
+        }
+
+        window.onload = () => console.log("Nexus Super Platform Active");
+    </script>
+</body>
+</html>
