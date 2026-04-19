@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus AI Hub | المنصة المتكاملة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #a855f7;
+            --accent: #f43f5e;
+            --bg-dark: #0f172a;
+            --glass: rgba(30, 41, 59, 0.7);
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg-dark);
+            color: #f8fafc;
+            overflow-x: hidden;
+            margin: 0;
+        }
+
+        .glass-panel {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+        }
+
+        .ai-gradient-text {
+            background: linear-gradient(135deg, #6366f1, #a855f7, #f43f5e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .glow-btn {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .glow-btn:hover:not(:disabled) {
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .glow-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .loader {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #FFF;
+            border-bottom-color: transparent;
+            border-radius: 50%;
+            display: inline-block;
+            animation: rotation 1s linear infinite;
+        }
+
+        @keyframes rotation {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .code-editor {
+            font-family: 'Consolas', 'Monaco', monospace;
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid #334155;
+            overflow-x: auto;
+            direction: ltr;
+            text-align: left;
+            font-size: 14px;
+            line-height: 1.6;
+            max-height: 500px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Navigation -->
+    <header class="p-4 sticky top-0 z-50">
+        <div class="glass-panel px-6 py-4 flex justify-between items-center max-w-7xl mx-auto">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-rose-500 rounded-xl flex items-center justify-center shadow-lg">
+                    <i class="fas fa-microchip text-white text-xl"></i>
+                </div>
+                <h1 class="text-xl font-bold ai-gradient-text tracking-tight hidden sm:block">NEXUS PRO</h1>
+            </div>
+            
+            <nav class="flex items-center gap-2 md:gap-4 overflow-x-auto no-scrollbar py-1">
+                <button onclick="showTab('text-gen')" class="nav-link px-3 py-1 text-sm font-semibold text-indigo-400 border-b-2 border-indigo-500 transition-all">النصوص</button>
+                <button onclick="showTab('forge-ide')" class="nav-link px-3 py-1 text-sm font-semibold hover:text-indigo-400 transition-all">البرمجة</button>
+                <button onclick="showTab('vision')" class="nav-link px-3 py-1 text-sm font-semibold hover:text-indigo-400 transition-all">الرؤية</button>
+                <button onclick="showTab('image-gen')" class="nav-link px-3 py-1 text-sm font-semibold hover:text-indigo-400 transition-all">الصور</button>
+                <button onclick="showTab('audio-gen')" class="nav-link px-3 py-1 text-sm font-semibold hover:text-indigo-400 transition-all">الصوت</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-1 container mx-auto px-4 pt-4 pb-20">
+        
+        <!-- Welcome Section -->
+        <section class="text-center mb-10 mt-4">
+            <h2 class="text-3xl md:text-5xl font-black mb-4">قوة <span class="ai-gradient-text">الذكاء المطلق</span></h2>
+            <p class="text-slate-400 text-sm md:text-base">تحكم في أقوى النماذج العالمية لإنشاء أي شيء تتخيله في مكان واحد.</p>
+        </section>
+
+        <!-- Tab: Forge IDE (Software Creation) -->
+        <div id="forge-ide" class="tab-content">
+            <div class="glass-panel p-6 max-w-5xl mx-auto shadow-2xl">
+                <div class="flex items-center gap-3 mb-6">
+                    <i class="fas fa-terminal text-cyan-400 text-2xl"></i>
+                    <h3 class="text-xl font-bold">Forge IDE | بناء الأنظمة والمنصات</h3>
+                </div>
+                <textarea id="code-prompt" placeholder="صف البرنامج الذي تريده (مثلاً: نظام إدارة مهام كامل مع تخزين بيانات وتصميم عصري)" class="w-full h-32 bg-slate-900/50 border border-slate-700 rounded-xl p-4 mb-4 focus:ring-2 focus:ring-cyan-500 outline-none transition-all" dir="rtl"></textarea>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                    <button onclick="generateSoftware('html')" id="html-btn" class="py-4 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-xl font-bold transition-all flex items-center justify-center gap-3">
+                        <i class="fab fa-chrome text-orange-400 text-xl"></i> بناء منصة ويب كاملة
+                    </button>
+                    <button onclick="generateSoftware('python')" id="py-btn" class="py-4 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-xl font-bold transition-all flex items-center justify-center gap-3">
+                        <i class="fab fa-python text-blue-400 text-xl"></i> بناء برنامج Python متطور
+                    </button>
+                </div>
+
+                <div id="code-result-container" class="mt-8 hidden animate-fadeIn">
+                    <div class="flex justify-between items-center mb-4 bg-slate-800/80 p-3 rounded-lg border border-slate-700">
+                        <span class="text-cyan-400 font-mono text-xs">SOURCE_CODE_READY</span>
+                        <div class="flex gap-2">
+                            <button onclick="copyToClipboard('code-output')" class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 rounded-md text-xs font-bold transition-all">نسخ الكود</button>
+                            <button id="preview-btn" onclick="previewCode()" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 rounded-md text-xs font-bold transition-all hidden">تشغيل المنصة</button>
+                        </div>
+                    </div>
+                    <pre id="code-output" class="code-editor"></pre>
+                </div>
+                
+                <div id="live-preview-container" class="mt-8 hidden border-2 border-slate-700 rounded-2xl overflow-hidden shadow-2xl bg-white">
+                    <div class="bg-slate-800 p-3 flex justify-between items-center text-white text-xs px-6">
+                        <span class="font-bold flex items-center gap-2"><i class="fas fa-play-circle text-emerald-400"></i> نظام المعاينة الحية</span>
+                        <button onclick="document.getElementById('live-preview-container').classList.add('hidden')" class="hover:text-rose-400 transition-colors">إغلاق <i class="fas fa-times"></i></button>
+                    </div>
+                    <iframe id="code-iframe" class="w-full h-[600px] border-none"></iframe>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Text Generation -->
+        <div id="text-gen" class="tab-content active">
+            <div class="glass-panel p-6 max-w-4xl mx-auto shadow-xl">
+                <div class="flex items-center gap-3 mb-6">
+                    <i class="fas fa-microchip text-indigo-500 text-2xl"></i>
+                    <h3 class="text-xl font-bold">النظام الذكي الشامل</h3>
+                </div>
+                <textarea id="text-input" placeholder="اطلب أي شيء: مقالات، أبحاث، حلول معقدة، أو استشارات..." class="w-full h-40 bg-slate-900/50 border border-slate-700 rounded-xl p-4 mb-4 focus:ring-2 focus:ring-indigo-500 outline-none transition-all" dir="rtl"></textarea>
+                <div class="flex items-center gap-4 mb-6">
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="search-grounding" class="sr-only peer">
+                        <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                        <span class="mr-3 text-sm font-medium">بحث Google المباشر للدقة</span>
+                    </label>
+                </div>
+                <button onclick="generateText()" id="text-btn" class="w-full py-4 bg-indigo-600 hover:bg-indigo-700 rounded-xl font-bold transition-all glow-btn flex items-center justify-center gap-3">
+                    <span>تحليل وتوليد</span>
+                    <i class="fas fa-bolt"></i>
+                </button>
+
+                <div id="text-result-container" class="mt-8 hidden">
+                    <div class="p-6 bg-slate-900/80 rounded-2xl border border-slate-700 relative shadow-inner">
+                        <div id="text-result" class="prose prose-invert max-w-none text-right leading-relaxed text-slate-200 whitespace-pre-wrap"></div>
+                        <div id="sources" class="mt-4 pt-4 border-t border-slate-800 text-xs text-indigo-400"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Remaining tabs (Vision, Image, Audio) with similar structure and fixes -->
+        <div id="vision" class="tab-content">
+            <div class="glass-panel p-6 max-w-4xl mx-auto">
+                <div class="flex items-center gap-3 mb-6">
+                    <i class="fas fa-eye text-rose-500 text-2xl"></i>
+                    <h3 class="text-xl font-bold">تحليل البيانات البصرية</h3>
+                </div>
+                <div class="border-2 border-dashed border-slate-700 rounded-2xl p-8 text-center hover:border-rose-500 transition-all mb-6 cursor-pointer bg-slate-800/20" onclick="document.getElementById('vision-file').click()">
+                    <i class="fas fa-file-image text-3xl mb-3 text-slate-500"></i>
+                    <p class="text-sm">اضغط لرفع صورة للتحليل</p>
+                    <input type="file" id="vision-file" hidden accept="image/*" onchange="handleImageUpload(event)">
+                </div>
+                <div id="vision-preview-container" class="hidden mb-6 text-center"><img id="vision-preview" class="rounded-xl max-h-60 mx-auto shadow-lg border border-slate-700" src=""></div>
+                <input type="text" id="vision-prompt" placeholder="ماذا تريد أن تفهم من هذه الصورة؟" class="w-full bg-slate-900/50 border border-slate-700 rounded-xl p-4 mb-4 outline-none focus:ring-2 focus:ring-rose-500">
+                <button onclick="analyzeImage()" id="vision-btn" class="w-full py-4 bg-rose-600 hover:bg-rose-700 rounded-xl font-bold transition-all glow-btn">تحليل فوري</button>
+                <div id="vision-result-container" class="mt-8 hidden p-6 bg-slate-900/80 rounded-2xl border border-slate-700" id="vision-result"></div>
+            </div>
+        </div>
+
+        <!-- Art & Audio sections remain as functional place holders with fixed logic -->
+        <div id="image-gen" class="tab-content">
+             <div class="glass-panel p-6 max-w-4xl mx-auto">
+                <div class="flex items-center gap-3 mb-6"><i class="fas fa-paint-brush text-amber-500 text-2xl"></i><h3 class="text-xl font-bold">توليد الصور الاحترافية</h3></div>
+                <textarea id="image-prompt" placeholder="صف المشهد الذي تريد رسمه بدقة..." class="w-full h-32 bg-slate-900/50 border border-slate-700 rounded-xl p-4 mb-6 outline-none focus:ring-2 focus:ring-amber-500"></textarea>
+                <button onclick="generateArt()" id="art-btn" class="w-full py-4 bg-amber-600 hover:bg-amber-700 rounded-xl font-bold transition-all glow-btn">بدء الرسم</button>
+                <div id="art-result-container" class="mt-8 hidden text-center">
+                    <img id="art-result" class="rounded-2xl mx-auto shadow-2xl max-w-full h-auto border-4 border-slate-800" src="">
+                </div>
+            </div>
+        </div>
+
+        <div id="audio-gen" class="tab-content">
+            <div class="glass-panel p-6 max-w-4xl mx-auto">
+                <div class="flex items-center gap-3 mb-6"><i class="fas fa-waveform-lines text-emerald-500 text-2xl"></i><h3 class="text-xl font-bold">محرك الصوت البشري</h3></div>
+                <textarea id="audio-text" placeholder="اكتب النص المراد تحويله لصوت..." class="w-full h-32 bg-slate-900/50 border border-slate-700 rounded-xl p-4 mb-6 outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+                <div class="mb-6"><select id="voice-select" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 outline-none"><option value="Kore">صوت هادئ (Kore)</option><option value="Zephyr">صوت قوي (Zephyr)</option><option value="Puck">صوت مرح (Puck)</option></select></div>
+                <button onclick="generateAudio()" id="audio-btn" class="w-full py-4 bg-emerald-600 hover:bg-emerald-700 rounded-xl font-bold transition-all glow-btn">توليد الصوت</button>
+                <div id="audio-result-container" class="mt-8 hidden flex justify-center"><audio id="audio-player" controls class="w-full max-w-md"></audio></div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        const apiKey = ""; 
+        let currentCode = "";
+
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('text-indigo-400', 'border-b-2', 'border-indigo-500');
+                if(link.getAttribute('onclick').includes(tabId)) {
+                    link.classList.add('text-indigo-400', 'border-b-2', 'border-indigo-500');
+                }
+            });
+        }
+
+        async function fetchWithRetry(url, options) {
+            let delay = 1000;
+            for (let i = 0; i < 5; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (response.ok) return await response.json();
+                    if (response.status !== 429) break;
+                } catch (e) {}
+                await new Promise(r => setTimeout(r, delay));
+                delay *= 2;
+            }
+            throw new Error("فشلت المحاولة، تأكد من الاتصال.");
+        }
+
+        function toggleLoading(btnId, isLoading) {
+            const btn = document.getElementById(btnId);
+            if (isLoading) {
+                btn.disabled = true;
+                btn.dataset.original = btn.innerHTML;
+                btn.innerHTML = `<span class="loader"></span> جاري المعالجة...`;
+            } else {
+                btn.disabled = false;
+                btn.innerHTML = btn.dataset.original;
+            }
+        }
+
+        async function generateSoftware(lang) {
+            const prompt = document.getElementById('code-prompt').value;
+            if (!prompt) return;
+
+            const btnId = lang === 'html' ? 'html-btn' : 'py-btn';
+            toggleLoading(btnId, true);
+            
+            try {
+                const systemPrompt = `You are a professional software engineer. Provide only raw code. 
+                For HTML/Web: Generate a single file with HTML, CSS (Tailwind allowed), and JS. 
+                For Python: Generate a complete runnable script. 
+                DO NOT use markdown backticks like \`\`\`html. JUST RAW CODE.`;
+
+                const data = await fetchWithRetry(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: `Create this ${lang} program: ${prompt}` }] }],
+                        systemInstruction: { parts: [{ text: systemPrompt }] }
+                    })
+                });
+
+                let code = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+                // Clean any leftover markdown formatting just in case
+                code = code.replace(/^```[a-z]*\n/i, '').replace(/\n```$/i, '').trim();
+                
+                currentCode = code;
+                document.getElementById('code-output').textContent = code;
+                document.getElementById('code-result-container').classList.remove('hidden');
+                
+                if (lang === 'html') {
+                    document.getElementById('preview-btn').classList.remove('hidden');
+                } else {
+                    document.getElementById('preview-btn').classList.add('hidden');
+                }
+                document.getElementById('code-result-container').scrollIntoView({ behavior: 'smooth' });
+            } catch (error) {
+                alert("حدث خطأ في البرمجة: " + error.message);
+            } finally {
+                toggleLoading(btnId, false);
+            }
+        }
+
+        function previewCode() {
+            const container = document.getElementById('live-preview-container');
+            const iframe = document.getElementById('code-iframe');
+            container.classList.remove('hidden');
+            const blob = new Blob([currentCode], { type: 'text/html' });
+            iframe.src = URL.createObjectURL(blob);
+            container.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        async function generateText() {
+            const input = document.getElementById('text-input').value;
+            if (!input) return;
+            toggleLoading('text-btn', true);
+            try {
+                const useSearch = document.getElementById('search-grounding').checked;
+                const payload = {
+                    contents: [{ parts: [{ text: input }] }],
+                    systemInstruction: { parts: [{ text: "أنت ذكاء اصطناعي فائق، أجِب باللغة العربية بدقة عالية." }] }
+                };
+                if (useSearch) payload.tools = [{ "google_search": {} }];
+
+                const data = await fetchWithRetry(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "لا توجد نتيجة.";
+                document.getElementById('text-result').textContent = text;
+                document.getElementById('text-result-container').classList.remove('hidden');
+
+                const sources = data.candidates?.[0]?.groundingMetadata?.groundingAttributions;
+                const sourcesDiv = document.getElementById('sources');
+                if (sources) {
+                    sourcesDiv.innerHTML = "المصادر الموثوقة: " + sources.map(s => `<a href="${s.web?.uri}" target="_blank" class="underline mx-1">${s.web?.title}</a>`).join(" | ");
+                } else { sourcesDiv.innerHTML = ""; }
+            } catch (error) {
+                alert("خطأ: " + error.message);
+            } finally {
+                toggleLoading('text-btn', false);
+            }
+        }
+
+        // Additional feature implementations...
+        let uploadedBase64 = null;
+        function handleImageUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                uploadedBase64 = ev.target.result.split(',')[1];
+                document.getElementById('vision-preview').src = ev.target.result;
+                document.getElementById('vision-preview-container').classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function analyzeImage() {
+            if (!uploadedBase64) return alert("ارفع صورة أولاً.");
+            toggleLoading('vision-btn', true);
+            try {
+                const prompt = document.getElementById('vision-prompt').value || "اشرح الصورة.";
+                const data = await fetchWithRetry(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }, { inlineData: { mimeType: "image/png", data: uploadedBase64 } }] }] })
+                });
+                document.getElementById('vision-result-container').textContent = data.candidates[0].content.parts[0].text;
+                document.getElementById('vision-result-container').classList.remove('hidden');
+            } catch (e) { alert(e.message); } finally { toggleLoading('vision-btn', false); }
+        }
+
+        async function generateArt() {
+            const prompt = document.getElementById('image-prompt').value;
+            if (!prompt) return;
+            toggleLoading('art-btn', true);
+            try {
+                const data = await fetchWithRetry(`https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ instances: { prompt: prompt }, parameters: { sampleCount: 1 } })
+                });
+                const b64 = data.predictions[0].bytesBase64Encoded;
+                document.getElementById('art-result').src = `data:image/png;base64,${b64}`;
+                document.getElementById('art-result-container').classList.remove('hidden');
+            } catch (e) { alert(e.message); } finally { toggleLoading('art-btn', false); }
+        }
+
+        async function generateAudio() {
+            const text = document.getElementById('audio-text').value;
+            if (!text) return;
+            toggleLoading('audio-btn', true);
+            try {
+                const voice = document.getElementById('voice-select').value;
+                const data = await fetchWithRetry(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: text }] }],
+                        generationConfig: { responseModalities: ["AUDIO"], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } } }
+                    })
+                });
+                const audioB64 = data.candidates[0].content.parts[0].inlineData.data;
+                const blob = pcmToWav(audioB64, 24000);
+                document.getElementById('audio-player').src = URL.createObjectURL(blob);
+                document.getElementById('audio-result-container').classList.remove('hidden');
+                document.getElementById('audio-player').play();
+            } catch (e) { alert(e.message); } finally { toggleLoading('audio-btn', false); }
+        }
+
+        function pcmToWav(b64, rate) {
+            const bin = atob(b64);
+            const buf = new ArrayBuffer(44 + bin.length);
+            const view = new DataView(buf);
+            const s = (v, o, str) => { for (let i = 0; i < str.length; i++) v.setUint8(o + i, str.charCodeAt(i)); };
+            s(view, 0, 'RIFF'); view.setUint32(4, 36 + bin.length, true);
+            s(view, 8, 'WAVE'); s(view, 12, 'fmt ');
+            view.setUint32(16, 16, true); view.setUint16(20, 1, true);
+            view.setUint16(22, 1, true); view.setUint32(24, rate, true);
+            view.setUint32(28, rate * 2, true); view.setUint16(32, 2, true);
+            view.setUint16(34, 16, true); s(view, 36, 'data');
+            view.setUint32(40, bin.length, true);
+            for (let i = 0; i < bin.length; i++) view.setUint8(44 + i, bin.charCodeAt(i));
+            return new Blob([buf], { type: 'audio/wav' });
+        }
+
+        function copyToClipboard(id) {
+            const text = document.getElementById(id).innerText || document.getElementById(id).textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                alert("تم نسخ الكود بنجاح!");
+            });
+        }
+    </script>
+</body>
+</html>
