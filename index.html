@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="الميعاد للملابس الشبابية - متجر ملابس عصري وشبابي في ليبيا">
+    <title>الميعاد - ملابس شبابية عصرية | Al-Mia'ad Youth Clothing</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <header class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <h1>الميعاد</h1>
+                <p class="brand-subtitle">ملابس شبابية عصرية</p>
+            </div>
+            <nav class="navbar-menu">
+                <ul>
+                    <li><a href="#home" class="active">الرئيسية</a></li>
+                    <li><a href="shop.html">المتجر</a></li>
+                    <li><a href="#about">عن المتجر</a></li>
+                    <li><a href="#contact">التواصل</a></li>
+                </ul>
+            </nav>
+            <div class="navbar-icons">
+                <button class="icon-btn" id="cart-btn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <circle cx="9" cy="21" r="1"/>
+                        <circle cx="20" cy="21" r="1"/>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                    </svg>
+                    <span class="cart-count" id="cart-count">0</span>
+                </button>
+                <button class="menu-toggle" id="menu-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Cart Sidebar -->
+    <aside class="cart-sidebar" id="cart-sidebar">
+        <div class="cart-header">
+            <h2>سلة المشتريات</h2>
+            <button class="close-btn" id="close-cart">&times;</button>
+        </div>
+        <div class="cart-items" id="cart-items">
+            <p class="empty-cart">السلة فارغة حالياً</p>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>الإجمالي:</span>
+                <span id="cart-total">0 د.ل</span>
+            </div>
+            <a href="checkout.html" class="btn btn-primary btn-block">إتمام الطلب</a>
+            <button class="btn btn-secondary btn-block" id="close-cart-btn">متابعة التسوق</button>
+        </div>
+    </aside>
+
+    <!-- Hero Banner -->
+    <section class="hero">
+        <div class="hero-content">
+            <h2 class="hero-title">موضة شبابية بأسعار مميزة</h2>
+            <p class="hero-subtitle">اكتشف أحدث تجميعاتنا من الملابس العصرية</p>
+            <a href="shop.html" class="btn btn-primary btn-lg">تسوق الآن</a>
+        </div>
+        <div class="hero-background"></div>
+    </section>
+
+    <!-- Products Showcase -->
+    <main>
+        <!-- Latest Arrivals Section -->
+        <section class="section" id="new-arrivals">
+            <div class="container">
+                <div class="section-header">
+                    <h2>وصل حديثاً</h2>
+                    <a href="shop.html" class="view-all">عرض الكل →</a>
+                </div>
+                <div class="products-grid" id="new-arrivals-grid">
+                    <!-- Products will be loaded here -->
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="https://via.placeholder.com/250x300?text=قميص+أزرق+نيون" alt="قميص أزرق نيون">
+                            <span class="product-badge">جديد</span>
+                        </div>
+                        <div class="product-info">
+                            <h3>قميص أزرق نيون</h3>
+                            <p class="product-category">قمصان</p>
+                            <div class="product-footer">
+                                <span class="price">150 د.ل</span>
+                                <button class="btn-icon add-to-cart-btn" data-product='{"id":1,"name":"قميص أزرق نيون","price":150,"category":"قمصان"}'>
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <circle cx="9" cy="21" r="1"/>
+                                        <circle cx="20" cy="21" r="1"/>
+                                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="https://via.placeholder.com/250x300?text=بنطال+أسود" alt="بنطال أسود كلاسيكي">
+                            <span class="product-badge">جديد</span>
+                        </div>
+                        <div class="product-info">
+                            <h3>بنطال أسود كلاسيكي</h3>
+                            <p class="product-category">بناطيل</p>
+                            <div class="product-footer">
+                                <span class="price">200 د.ل</span>
+                                <button class="btn-icon add-to-cart-btn" data-product='{"id":2,"name":"بنطال أسود كلاسيكي","price":200,"category":"بناطيل"}'>
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <circle cx="9" cy="21" r="1"/>
+                                        <circle cx="20" cy="21" r="1"/>
+                                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+        <!-- Best Sellers Section -->
+        <section class="section bg-light" id="best-sellers">
+            <div class="container">
+                <div class="section-header">
+                    <h2>الأكثر مبيعاً</h2>
+                    <a href="shop.html" class="view-all">عرض الكل →</a>
+                
+
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="https://via.placeholder.com/250x300?text=تي+شيرت+برتقالي" alt="تي شيرت برتقالي">
+                            <span class="product-badge discount">-15%</span>
+                        </div>
+                        <div class="product-info">
+                            <h3>تي شيرت برتقالي</h3>
+                            <p class="product-category">قمصان</p>
+                            <div class="product-footer">
+                                <span class="price">85 د.ل</span>
+                                <button class="btn-icon add-to-cart-btn" data-product='{"id":6,"name":"تي شيرت برتقالي","price":85,"category":"قمصان"}'>
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <circle cx="9" cy="21" r="1"/>
+                                        <circle cx="20" cy="21" r="1"/>
+                                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+        <!-- Features Section -->
+        <section class="section bg-dark features-section">
+            <div class="container">
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🚚</div>
+                        <h3>توصيل سريع</h3>
+                        <p>توصيل لجميع المدن الليبية</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💰</div>
+                        <h3>دفع عند الاستلام</h3>
+                        <p>ادفع للمندوب عند استلام طلبك</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📱</div>
+                        <h3>تأكيد عبر واتساب</h3>
+                        <p>تأكيد فوري لطلبك عبر الواتساب</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⭐</div>
+                        <h3>جودة مضمونة</h3>
+                        <p>منتجات ذات جودة عالية</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>عن الميعاد</h4>
+                    <p>متجر متخصص في الملابس الشبابية العصرية بأسعار تنافسية وجودة عالية</p>
+                </div>
+                <div class="footer-section">
+                    <h4>روابط سريعة</h4>
+                    <ul>
+                        <li><a href="shop.html">المتجر</a></li>
+                        <li><a href="#about">من نحن</a></li>
+                        <li><a href="#contact">تواصل معنا</a></li>
+                        <li><a href="#policy">سياسة الخصوصية</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>تواصل معنا</h4>
+                    <p>📞 +218-9XXXXXXXX</p>
+                    <p>📧 info@almiaaad.ly</p>
+                    <p>📱 <a href="https://wa.me/218XXXXXXXXX" class="whatsapp-link">WhatsApp</a></p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 الميعاد للملابس الشبابية. جميع الحقوق محفوظة.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
