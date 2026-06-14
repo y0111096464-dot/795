@@ -18,16 +18,11 @@ class CartManager {
 
     addItem(product, quantity = 1) {
         const existingItem = this.cart.find(item => item.id === product.id);
-        
         if (existingItem) {
             existingItem.quantity += quantity;
         } else {
-            this.cart.push({
-                ...product,
-                quantity: quantity
-            });
+            this.cart.push({ ...product, quantity: quantity });
         }
-        
         this.saveCart();
         this.updateCartUI();
         this.showNotification('تمت إضافة المنتج إلى السلة', 'success');
@@ -88,7 +83,6 @@ class CartManager {
                     </div>
                 `).join('');
 
-                // Add event listeners for quantity controls
                 document.querySelectorAll('.minus-qty').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         const id = parseInt(e.target.dataset.id);
@@ -143,9 +137,9 @@ class CartManager {
             z-index: 3000;
             animation: slideIn 0.3s ease;
         `;
-        
+
         document.body.appendChild(notification);
-        
+
         setTimeout(() => {
             notification.style.animation = 'slideOut 0.3s ease';
             setTimeout(() => notification.remove(), 300);
